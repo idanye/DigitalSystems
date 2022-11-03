@@ -14,7 +14,8 @@ CHIP Or {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // Or operator will be built using the identity that was proven in class: 
+    // x or y = NOT( NOT(x) AND NOT(y) )
     Not(in=a, out=nota);
     Not(in=b, out=notb);
     And(a=nota, b=notb, out=notaandb);

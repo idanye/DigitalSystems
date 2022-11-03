@@ -14,7 +14,8 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // Mux returns 1 in 3 cases. Using the boolean algebra identities,
+    // we achieved the following identity: Mux = ((a AND Not(sel) OR (b and sel) )
     Not(in=sel, out=notsel);
     And(a=a, b=notsel, out=aAndNotsel);
     And(a=b, b=sel, out=bAndsel);
