@@ -13,7 +13,8 @@ CHIP Or8Way {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // The Or8Way chip was built using Or gates and ran for all the input bits.
+
     Or(a=in[0], b=in[1], out=a);
     Or(a=a, b=in[2], out=b);
     Or(a=b, b=in[3], out=c);

@@ -13,6 +13,6 @@ CHIP Not {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // The Not gate will be built using Nand gate, as we saw in the class: Not(a) = a Nand a.
     Nand(a=in, b=in, out=out);
 }
