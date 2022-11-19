@@ -12,3 +12,18 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+
+//while (KDB != 0)
+// then screen = -1 (then the screen is black) *find out how many pixels to blacken
+// outside the loop
+// screen = 0
+// end
+
+(LOOP)
+     D = condition
+    @LOOP_END
+    D;JEQ
+     code
+    @LOOP
+    0;JMP
+(LOOP_END)
