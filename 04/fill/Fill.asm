@@ -1,29 +1,54 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/04/Fill.asm
-
-// Runs an infinite loop that listens to the keyboard input.
-// When a key is pressed (any key), the program blackens the screen,
-// i.e. writes "black" in every pixel;
-// the screen should remain fully black as long as the key is pressed. 
-// When no key is pressed, the program clears the screen, i.e. writes
-// "white" in every pixel;
-// the screen should remain fully clear as long as no key is pressed.
-
-// Put your code here.
-
-//while (KDB != 0)
-// then screen = -1 (then the screen is black) *find out how many pixels to blacken
-// outside the loop
-// screen = 0
-// end
-
+@i // i = 0
+M = 0
+@KBD // EndScreen = KDB - 1 - screen 
+D = A - 1
+@SCREEN 
+D = D - A 
+@END_SCREEN
+M = D + 1
 (LOOP)
-     D = condition
-    @LOOP_END
+     @END_SCREEN // if (endscreen - i == 0)
+     D = M
+     @i
+     D = D - M
+    @LOOP_END // if (D == 0)
     D;JEQ
-     code
+     @KBD
+     D = M
+     @WHITE
+     D;JEQ
+     @BLACK
+     D;JNE
+    (CONT_LOOP)
+     @i
+     M = M + 1 // i++
     @LOOP
     0;JMP
 (LOOP_END)
+(BLACK)
+     @i 
+     D = M
+     @SCREEN // A = Screen + i
+     D = A + D 
+     @temp
+     M = D
+     @temp
+     A = M
+     M = -1 // M[A] = -1
+     @CONT_LOOP
+     0;JMP
+(WHITE)
+     @i 
+     D = M
+     @SCREEN // A = Screen + i
+     A = A + D
+     @temp
+     M = D
+     @temp
+     A = M
+     M = 0 // M[A] = 0
+     @CONT_LOOP
+     0;JMP
+(END)
+     @END
+     0;JMP
