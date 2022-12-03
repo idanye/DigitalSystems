@@ -27,6 +27,17 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
+    // Single address space is 0 - 24576
+    // For reaching the RAM, the address space is: 0-16383 -> 000000000000000-011111111111111
+    // For reaching the screen, the address space is: 16384-24575 -> 100000000000000 - 101111111111111
+    // For reaching the keyboard, the address is - 110000000000000
+
+    // By the two most significant bits, we can understand to which section we want to address
+    // 00 RAM
+    // 01 RAM
+    // 10 screen
+    // 11 Keyboard
+
     DMux4Way(in=load, sel=address[13..14], a=loadram1, b=loadram2, c=loadscreen, d=loadkeyb);
     Screen(in=in, load=loadscreen, address=address[0..12], out=outScreen);
     Keyboard(out=outkeyb);
