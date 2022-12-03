@@ -39,5 +39,39 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    And(a=instruction[15], b=instruction[3], out=writeM); // Should be written to the data memory?
+
+    Not(in=instruction[15], out=AInsruction); // Does the instruction is A instruction? 
+
+    And(a=instruction[15], b=instruction[5], out=loadToARegister); // Is C instruction? Should be loaded to A register?
+    
+    Mux16(a=instruction, b=ALUout, sel=loadToARegister, out=ARegisterIn); // Which value should be inserted into A register
+    Or(a=AInsruction, b=loadToARegister, out=loadA); // Checks if we should load the value into A register
+    ARegister(in=ARegisterIn, load=loadA, out=Aout); //Generates the value inside the A-register
+    
+    Or16(a=false, b=Aout, out[0..14]=addressM); 
+
+    // A or M - using the 12-bit of the instruction
+    Mux16(a=Aout, b=inM, sel=instruction[12], out=AorMout);
+
+    And(a=instruction[15], b=instruction[4], out=loadToDRegister); // Should the ALU output be loaded into D register
+    DRegister(in=ALUout, load=loadToDRegister, out=Dout);
+    ALU(x=Dout, y=AorMout, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUout, zr=ZRout, ng=NGout);
+
+    Or16(a=false, b=ALUout, out=outM); 
+    
+    And(a=ZRout, b=instruction[1], out=jeq); //The ALU output is zero
+    And(a=NGout, b=instruction[2], out=jlt); //The ALU output is negative
+    
+    Or(a=ZRout, b=NGout, out=zeroOrNeg); //zero OR negative
+    Not(in=zeroOrNeg, out=positive); //The ALU output is positive
+
+    And(a=positive, b=instruction[0], out=jgt); 
+    Or(a=jeq, b=jlt, out=jle);
+    Or(a=jle, b=jgt, out=jump);
+    
+    And(a=instruction[15], b=jump, out=PC); 
+    Not(in=PC, out=PCinc);
+
+    PC(in=Aout, load=PC, inc=PCinc, reset=reset, out[0..14]=pc);
 }
