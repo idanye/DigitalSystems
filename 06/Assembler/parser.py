@@ -1,7 +1,11 @@
-# from types_of_instructions import TypesOfInstructions
-import types_of_instructions
+import os, sys
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+from types_of_instructions import TypesOfInstructions, TypesofDest
 
 COMMENT_SYMBOL = "//"
+LEADING_SYMBOL_JUMP = ";"
+LEADING_SYMBOL_COMP = "="
 
 
 class Parser:
@@ -12,52 +16,79 @@ class Parser:
         self.advance()
 
     def has_more_lines(self):
-        total_number_of_lines = len(self.__file_content)
+        total_number_of_lines = len(self.__file_content) - 1
         if self.__current_line_number < total_number_of_lines:
             return True
         return False
 
     def advance(self):
-        self.__current_line_number += 1
-        while self.get_current_line().startswith(COMMENT_SYMBOL) or self.get_current_line() == "":
-            self.__current_line_number += 1
+        # TODO: small refactor is needed
+        if self.has_more_lines():
+            current_line = self.get_current_line()
+            if not current_line.startswith(COMMENT_SYMBOL) and not current_line == "":
+                self.__current_line_number += 1
+
+            while self.has_more_lines() and (current_line.startswith(COMMENT_SYMBOL) or current_line == ""):
+                self.__current_line_number += 1
+                current_line = self.get_current_line()
 
     def get_current_line(self):
-        return self.__file_content[self.__current_line_number]
+        instruction_without_ws = self.__file_content[self.__current_line_number].replace(" ", "")
+        if COMMENT_SYMBOL in instruction_without_ws:
+            return instruction_without_ws.split(COMMENT_SYMBOL)[0]
+        return instruction_without_ws
 
     def instruction_type(self):
-        a_instruction_symbol = str(types_of_instructions.TypesOfInstructions.A_INSTRUCTION.value)
-        l_instruction_symbol = str(types_of_instructions.TypesOfInstructions.L_INSTRUCTION.value)
+        a_instruction_symbol = str(TypesOfInstructions.A_INSTRUCTION.value)
+        l_instruction_symbol = str(TypesOfInstructions.L_INSTRUCTION.value)
 
         if self.get_current_line().startswith(a_instruction_symbol):
-            return str(types_of_instructions.TypesOfInstructions.A_INSTRUCTION.name)
+            return TypesOfInstructions.A_INSTRUCTION.name
         elif self.get_current_line().startswith(l_instruction_symbol):
-            return str(types_of_instructions.TypesOfInstructions.L_INSTRUCTION.name)
+            return TypesOfInstructions.L_INSTRUCTION.name
         else:
-            return str(types_of_instructions.TypesOfInstructions.C_INSTRUCTION.name)
+            return TypesOfInstructions.C_INSTRUCTION.name
 
     def symbol(self):
-        if self.instruction_type() == types_of_instructions.TypesOfInstructions.A_INSTRUCTION.name:
-            return str(self.get_current_line())[1:]
-        elif self.instruction_type() == types_of_instructions.TypesOfInstructions.L_INSTRUCTION.name:
-            return str(self.get_current_line())[1:-1]
+        if self.instruction_type() == TypesOfInstructions.A_INSTRUCTION.name:
+            return self.get_current_line()[1:]
+        elif self.instruction_type() == TypesOfInstructions.L_INSTRUCTION.name:
+            return self.get_current_line()[1:-1]
 
-    def dest(self, instruction):
-        if instruction.instruction_type() == types_of_instructions.TypesOfInstructions.C_INSTRUCTION.name:
-            match instruction:
-                case types_of_instructions.TypesofDest.null.name:
-                    return types_of_instructions.TypesofDest.null.value
-                case types_of_instructions.TypesofDest.M.value:
-                    return types_of_instructions.TypesofDest.M.value
-                case types_of_instructions.TypesofDest.D.value:
-                    return types_of_instructions.TypesofDest.D.value
-                case types_of_instructions.TypesofDest.DM.value:
-                    return types_of_instructions.TypesofDest.DM.value
-                case types_of_instructions.TypesofDest.A.value:
-                    return types_of_instructions.TypesofDest.A.value
-                case types_of_instructions.TypesofDest.AM.value:
-                    return types_of_instructions.TypesofDest.AM.value
-                case types_of_instructions.TypesofDest.AD.value:
-                    return types_of_instructions.TypesofDest.AD.value
-                case types_of_instructions.TypesofDest.ADM.value:
-                    return types_of_instructions.TypesofDest.ADM.value
+    def comp(self):
+        current_instruction = self.get_current_line()
+        if self.instruction_type() == TypesOfInstructions.C_INSTRUCTION.name:
+            if LEADING_SYMBOL_COMP in current_instruction:
+                current_instruction = current_instruction.split(LEADING_SYMBOL_COMP)[1]
+
+            if LEADING_SYMBOL_JUMP in current_instruction:
+                current_instruction = current_instruction.split(LEADING_SYMBOL_JUMP)[0]
+
+            return current_instruction
+
+    def jump(self):
+        current_instruction = self.get_current_line()
+        if self.instruction_type() == TypesOfInstructions.C_INSTRUCTION.name:
+            if LEADING_SYMBOL_JUMP in current_instruction:
+                return current_instruction.split(LEADING_SYMBOL_JUMP)[1]
+
+
+    # def dest(self, instruction):
+    #     if instruction.instruction_type() == TypesOfInstructions.C_INSTRUCTION.name:
+    #         switch instruction:
+    #             case TypesofDest.null.name:
+    #                 return TypesofDest.null.value
+    #             case TypesofDest.M.value:
+    #                 return TypesofDest.M.value
+    #             case TypesofDest.D.value:
+    #                 return TypesofDest.D.value
+    #             case TypesofDest.DM.value:
+    #                 return TypesofDest.DM.value
+    #             case TypesofDest.A.value:
+    #                 return TypesofDest.A.value
+    #             case TypesofDest.AM.value:
+    #                 return TypesofDest.AM.value
+    #             case TypesofDest.AD.value:
+    #                 return TypesofDest.AD.value
+    #             case TypesofDest.ADM.value:
+    #                 return TypesofDest.ADM.value
