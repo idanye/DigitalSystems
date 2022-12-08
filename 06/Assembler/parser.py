@@ -1,7 +1,7 @@
 import os, sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
-from types_of_instructions import TypesOfInstructions, TypesofDest
+from types_of_instructions import TypesOfInstructions
 
 COMMENT_SYMBOL = "//"
 LEADING_SYMBOL_JUMP = ";"
@@ -72,23 +72,9 @@ class Parser:
             if LEADING_SYMBOL_JUMP in current_instruction:
                 return current_instruction.split(LEADING_SYMBOL_JUMP)[1]
 
+    def dest(self):
+        current_instruction = self.get_current_line()
+        if self.instruction_type() == TypesOfInstructions.C_INSTRUCTION.name:
+            if LEADING_SYMBOL_COMP in current_instruction:
+                return current_instruction.split(LEADING_SYMBOL_COMP)[0]
 
-    # def dest(self, instruction):
-    #     if instruction.instruction_type() == TypesOfInstructions.C_INSTRUCTION.name:
-    #         switch instruction:
-    #             case TypesofDest.null.name:
-    #                 return TypesofDest.null.value
-    #             case TypesofDest.M.value:
-    #                 return TypesofDest.M.value
-    #             case TypesofDest.D.value:
-    #                 return TypesofDest.D.value
-    #             case TypesofDest.DM.value:
-    #                 return TypesofDest.DM.value
-    #             case TypesofDest.A.value:
-    #                 return TypesofDest.A.value
-    #             case TypesofDest.AM.value:
-    #                 return TypesofDest.AM.value
-    #             case TypesofDest.AD.value:
-    #                 return TypesofDest.AD.value
-    #             case TypesofDest.ADM.value:
-    #                 return TypesofDest.ADM.value
