@@ -1,4 +1,5 @@
 import os, sys
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 from parser import Parser
@@ -13,7 +14,9 @@ if __name__ == '__main__':
         if bla.instruction_type() == "A_INSTRUCTION" or bla.instruction_type() == "L_INSTRUCTION":
             print(f"The symbol of the instruction is: {bla.symbol()}")
         if bla.instruction_type() == "C_INSTRUCTION":
-            print(f"DEST: {bla.dest()}\t| COMP: {bla.comp()}\t| JMP: {bla.jump()}")
-            print(f"DEST BINARY: {Code.dest(bla.dest())}\t| COMP: <>\t| JMP: <>")
+            print(f"DEST: {bla.dest()}\t|"
+                  f" COMP: {bla.comp()}\t|"
+                  f" JMP: {bla.jump()}")
+            print(f"DEST BINARY: {Code.dest(bla.dest())}\t| COMP BINARY: {Code.comp(bla.comp())}\t| JMP BINARY: {Code.jump(bla.jump())}")
         bla.advance()
         print()
