@@ -1,4 +1,5 @@
 import os, sys
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 from types_of_instructions import TypesOfInstructions
@@ -77,4 +78,3 @@ class Parser:
         if self.instruction_type() == TypesOfInstructions.C_INSTRUCTION.name:
             if LEADING_SYMBOL_COMP in current_instruction:
                 return current_instruction.split(LEADING_SYMBOL_COMP)[0]
-

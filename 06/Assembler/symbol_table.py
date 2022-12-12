@@ -1,3 +1,19 @@
+
+PRE_DICT = {
+    "R0": 0,
+    "R1": 1,
+    "R0": 0,
+    "R1": 1,
+    "R0": 0,
+    "R1": 1,
+    "R0": 0,
+    "R1": 1,
+    "R0": 0,
+    "R1": 1,
+    "R0": 0,
+    "R1": 1,
+}
+
 class SymbolTable:
 
     def __init__(self):
@@ -14,3 +30,5 @@ class SymbolTable:
     def get_address(self, symbol):
         if self.is_contain(symbol):
             return self.__symbol_table.get(symbol)
+
+    def load_predefined_symbol(self):
