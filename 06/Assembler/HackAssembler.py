@@ -8,12 +8,15 @@ class Hack_Assembler:
         # Constructs a symbol table and adds the predefined symbols to it
         self.__parser = Parser(file_name)
         self.__symbol = SymbolTable()
-
+        self.__symbol.load_predefined_symbol()
 
     def first_pass(self):
         # reads the program lines and add all symbols to symbol table
         # focuses on labels
-        pass
+        while self.__parser.has_more_lines():
+            if self.__parser.instruction_type() == "L_INSTRUCTION":
+                self.__symbol.add_entry(self.__parser.symbol(), self.__parser.get_current_line_number())
+
 
     def second_pass(self):
         # translates a symbol to the symbol table

@@ -78,3 +78,6 @@ class Parser:
         if self.instruction_type() == TypesOfInstructions.C_INSTRUCTION.name:
             if LEADING_SYMBOL_COMP in current_instruction:
                 return current_instruction.split(LEADING_SYMBOL_COMP)[0]
+
+    def get_current_line_number(self):
+        return self.__current_line_number
