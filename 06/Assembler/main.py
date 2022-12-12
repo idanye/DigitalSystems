@@ -3,7 +3,7 @@ import os, sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 from parser import Parser
-from code import Code
+from code_translator import CodeTranslator
 
 
 if __name__ == '__main__':
@@ -17,6 +17,6 @@ if __name__ == '__main__':
             print(f"DEST: {bla.dest()}\t|"
                   f" COMP: {bla.comp()}\t|"
                   f" JMP: {bla.jump()}")
-            print(f"DEST BINARY: {Code.dest(bla.dest())}\t| COMP BINARY: {Code.comp(bla.comp())}\t| JMP BINARY: {Code.jump(bla.jump())}")
+            print(f"DEST BINARY: {CodeTranslator.dest(bla.dest())}\t| COMP BINARY: {CodeTranslator.comp(bla.comp())}\t| JMP BINARY: {CodeTranslator.jump(bla.jump())}")
         bla.advance()
         print()
