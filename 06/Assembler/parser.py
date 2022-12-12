@@ -81,3 +81,12 @@ class Parser:
 
     def get_current_line_number(self):
         return self.__current_line_number
+
+    def go_to_start(self):
+        self.__current_line_number = -1
+        self.advance()
+
+    def is_a_bit_on(self):
+        if "M" in self.get_current_line().upper():
+            return True
+        return False

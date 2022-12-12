@@ -55,3 +55,21 @@ class CodeTranslator:
     @staticmethod
     def jump(jump_inst):
         return TypesOfJump[str(jump_inst).upper()].value
+
+    @staticmethod
+    def get_binary_num(number):
+        return '{0:16b}'.format(number)
+
+    @staticmethod
+    def get_c_instruction_binary(instruction):
+        dest = instruction.dest()
+        bin_dest = dest(dest)
+        comp = instruction.comp()
+        bin_comp = comp(comp)
+        jump = instruction.jump()
+        bin_jump = jump(jump)
+        if instruction.is_a_bit_on():
+            a = "1"
+        else:
+            a = "0"
+        return f"111{a}{bin_comp}{bin_dest}{bin_jump}"
