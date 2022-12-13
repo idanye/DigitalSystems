@@ -58,16 +58,16 @@ class CodeTranslator:
 
     @staticmethod
     def get_binary_num(number):
-        return '{0:16b}'.format(number)
+        return '{0:016b}'.format(number)
 
     @staticmethod
     def get_c_instruction_binary(instruction):
         dest = instruction.dest()
-        bin_dest = dest(dest)
+        bin_dest = CodeTranslator.dest(dest)
         comp = instruction.comp()
-        bin_comp = comp(comp)
+        bin_comp = CodeTranslator.comp(comp)
         jump = instruction.jump()
-        bin_jump = jump(jump)
+        bin_jump = CodeTranslator.jump(jump)
         if instruction.is_a_bit_on():
             a = "1"
         else:

@@ -24,17 +24,23 @@ PRE_DICT = {
     "THIS": 3,
     "THAT": 4
 }
+STARTING_INDEX = 16
 
 
 class SymbolTable:
     def __init__(self):
         self.__symbol_table = dict()
 
-    def add_entry(self, symbol, address):
+    def add_entry(self, symbol, address=None):
+        if address is None:
+            i = STARTING_INDEX
+            while i in self.__symbol_table.values():
+                i += 1
+            address = i
         self.__symbol_table.update({symbol: address})
 
     def is_contain(self, symbol):
-        if self.__symbol_table.get(symbol) is not None:
+        if symbol in self.__symbol_table:
             return True
         return False
 
@@ -43,6 +49,6 @@ class SymbolTable:
             return self.__symbol_table.get(symbol)
 
     def load_predefined_symbol(self):
-        for key,value in PRE_DICT:
-            self.add_entry(key, value)
+        for key in PRE_DICT.keys():
+            self.add_entry(key, PRE_DICT[key])
 

@@ -87,6 +87,10 @@ class Parser:
         self.advance()
 
     def is_a_bit_on(self):
-        if "M" in self.get_current_line().upper():
-            return True
+        if self.comp():
+            if "M" in self.comp().upper():
+                return True
+        # if self.dest():
+        #     if "M" in self.dest().upper():
+        #         return True
         return False
