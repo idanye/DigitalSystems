@@ -1,9 +1,5 @@
-import os, sys
-
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(SCRIPT_DIR))
-from types_of_dest import TypesOfDest
 from types_of_comp import TypesOfComp
+from types_of_dest import TypesOfDest
 from types_of_jump import TypesOfJump
 
 
@@ -11,10 +7,18 @@ class CodeTranslator:
 
     @staticmethod
     def dest(dest_inst):
+        """
+        :param dest_inst: gets the dest part of the C_INSTRUCTION
+        :return: returns the binary code of the dest mnemonic
+        """
         return TypesOfDest[str(dest_inst).upper()].value
 
     @staticmethod
     def comp(comp_inst):
+        """
+        :param comp_inst: gets the comp part of the C_INSTRUCTION
+        :return: returns the binary code of the comp mnemonic
+        """
         if comp_inst == "0":
             return TypesOfComp.zero.value
         if comp_inst == "1":
@@ -54,14 +58,28 @@ class CodeTranslator:
 
     @staticmethod
     def jump(jump_inst):
+        """
+        :param jump_inst: gets the jump part of the C_INSTRUCTION
+        :return: returns the binary code of the jump mnemonic
+        """
         return TypesOfJump[str(jump_inst).upper()].value
 
     @staticmethod
     def get_binary_num(number):
+        """
+        Translate decimal number to binary
+        :param number: decimal number
+        :return: returns the number in binary representation
+        """
         return '{0:016b}'.format(number)
 
     @staticmethod
     def get_c_instruction_binary(instruction):
+        """
+        Translate C_INSTRUCTION to binary
+        :param instruction: parser object that contains the current line
+        :return: the instruction in binary representation
+        """
         dest = instruction.dest()
         bin_dest = CodeTranslator.dest(dest)
         comp = instruction.comp()

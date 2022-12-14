@@ -1,20 +1,29 @@
 from parser import Parser
 from code_translator import CodeTranslator
 from symbol_table import SymbolTable
+import os
+import sys
 
 
 class HackAssembler:
+
     def __init__(self, file_name):
-        # opens an input file and process it
-        # Constructs a symbol table and adds the predefined symbols to it
+        """
+        This function opens an input file and processes it.
+        In addition, Constructs a symbol table and adds the predefined symbols to it.
+        :param file_name: path to the file that the class is processing
+        """
         self.__translated_code = []
+        self.__file_name = file_name
         self.__parser = Parser(file_name)
         self.__symbol = SymbolTable()
         self.__symbol.load_predefined_symbol()
 
     def first_pass(self):
-        # reads the program lines and add all symbols to symbol table
-        # focuses on labels
+        """
+        This function reads the program lines and adds all symbols to symbol table.
+        It focuses on labels.
+        """
         line_number = 0
         while self.__parser.has_more_lines():
             if self.__parser.instruction_type() == "L_INSTRUCTION":
@@ -24,7 +33,9 @@ class HackAssembler:
             self.__parser.advance()
 
     def second_pass(self):
-        # translates a symbol to the symbol table
+        """
+        translates the instructions into binary
+        """
         self.__parser.go_to_start()
         while self.__parser.has_more_lines():
             if self.__parser.instruction_type() == "A_INSTRUCTION":
@@ -42,13 +53,18 @@ class HackAssembler:
             self.__parser.advance()
 
     def output_file(self):
-        with open('prog.hack', 'w') as file:
+        """
+        This function creates a file that contains all the translated lines
+        """
+        output_file_name = os.path.basename(self.__file_name).split('.')[0] + ".hack"
+        with open(output_file_name, 'w') as file:
             for line in self.__translated_code:
                 file.write("%s\n" % line)
 
+
 if __name__ == '__main__':
-    assembler = HackAssembler(
-        "/Users/ority/Desktop/Studies/Digital systems/nand2tetris/repo/DigitalSystems/06/rect/Rect.asm")
+    path = sys.argv[1]
+    assembler = HackAssembler(path)
     assembler.first_pass()
     assembler.second_pass()
     assembler.output_file()

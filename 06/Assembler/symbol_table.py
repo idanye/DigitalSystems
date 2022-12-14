@@ -29,26 +29,46 @@ STARTING_INDEX = 16
 
 class SymbolTable:
     def __init__(self):
+        """
+        Creates a new empty symbol table
+        """
         self.__symbol_table = dict()
+        self.__index = STARTING_INDEX
 
     def add_entry(self, symbol, address=None):
+        """
+        Adds new symbol to the table with its address.
+        :param symbol: the symbol
+        :param address: the address
+        """
         if address is None:
-            i = STARTING_INDEX
-            while i in self.__symbol_table.values():
-                i += 1
-            address = i
+            address = self.__index
+            self.__index += 1
         self.__symbol_table.update({symbol: address})
 
     def is_contain(self, symbol):
+        """
+        Checks if the symbol table contains the given symbol
+        :param symbol: the symbol
+        :return: True if the table contains the symbol, otherwise False.
+        """
         if symbol in self.__symbol_table:
             return True
         return False
 
     def get_address(self, symbol):
+        """
+        Returns the address associated with the symbol.
+        :param symbol: the given symbol
+        :return: the address that is associated with the given symbol.
+        """
         if self.is_contain(symbol):
             return self.__symbol_table.get(symbol)
 
     def load_predefined_symbol(self):
+        """
+        Loads all the predefined symbols
+        """
         for key in PRE_DICT.keys():
             self.add_entry(key, PRE_DICT[key])
 
