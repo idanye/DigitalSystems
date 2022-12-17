@@ -1,7 +1,7 @@
 from command_type import CommandType
 
-
 COMMENT_SYMBOL = "//"
+WS_SYMBOL = " "
 
 
 class Parser:
@@ -55,7 +55,7 @@ class Parser:
         :return: C_ARITHMETIC, C_PUSH, C_POP, C_LABEL, C_GOTO, C_IF, C_FUNCTION
         C_RETURN, C_CALL
         """
-        command = self.get_current_line().split(" ")[0].upper()
+        command = self.get_current_line().split(WS_SYMBOL)[0].upper()
         return CommandType[command].value
 
     def arg1(self):
@@ -64,7 +64,10 @@ class Parser:
         In the case for C_ARITHMETIC, the command itself (add, sub, etc.)
         :return:
         """
-        pass
+        if self.command_type() == "C_ARITHMETIC":
+            return self.get_current_line()
+        elif self.command_type() != "C_RETURN":
+            return self.get_current_line().split(WS_SYMBOL)[1]
 
     def arg2(self):
         """
@@ -73,4 +76,5 @@ class Parser:
         C_FUNCTION or C_CALL
         :return:
         """
-        pass
+        if self.command_type() == "C_PUSH" or self.command_type() == "C_POP" or self.command_type() == "C_FUNCTION" or self.command_type() == "C_CALL":
+            return int(self.get_current_line().split(WS_SYMBOL)[2])
