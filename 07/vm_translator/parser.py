@@ -1,4 +1,4 @@
-from command_type import CommandType
+from command_type import COMMAND_TYPE
 
 COMMENT_SYMBOL = "//"
 WS_SYMBOL = " "
@@ -56,7 +56,7 @@ class Parser:
         C_RETURN, C_CALL
         """
         command = self.get_current_line().split(WS_SYMBOL)[0].upper()
-        return CommandType[command].value
+        return COMMAND_TYPE[command.lower()]
 
     def arg1(self):
         """
