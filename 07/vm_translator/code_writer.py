@@ -29,13 +29,13 @@ class CodeWriter:
         if command == "and":
             self.write_lst_to_file(self.__translate_arithm_to_asm("&", 2))
         if command == "eq":
-            self.write_lst_to_file(self.__translate_arithm_to_asm("EQ", 2, is_compare_operator=True))
+            self.write_lst_to_file(self.__translate_arithm_to_asm("JNE", 2, is_compare_operator=True))
             self.__label_index += 1
         if command == "gt":
-            self.write_lst_to_file(self.__translate_arithm_to_asm("GT", 2, is_compare_operator=True))
+            self.write_lst_to_file(self.__translate_arithm_to_asm("JLE", 2, is_compare_operator=True))
             self.__label_index += 1
         if command == "lt":
-            self.write_lst_to_file(self.__translate_arithm_to_asm("LT", 2, is_compare_operator=True))
+            self.write_lst_to_file(self.__translate_arithm_to_asm("JGE", 2, is_compare_operator=True))
             self.__label_index += 1
 
     def write_push_pop(self, command, segment, index):
@@ -76,25 +76,26 @@ class CodeWriter:
             lst.append("D=M")
             lst.append("@SP")
             lst.append("AM=M-1")
-            lst.append(f"M=D{sign}M")
+            lst.append(f"M=M{sign}D")
 
         elif arg == 1:
             lst.append(f"M={sign}M")
 
-        elif is_compare_operator:
+        if is_compare_operator:
             sign = temp
-            lst.append(f"@TRUE{self.__label_index}")
-            lst.append(f"D;J{sign}")
+            lst.append(f"D=M")
+            lst.append(f"@{sign}_{self.__label_index}")
+            lst.append(f"D;{sign}")
             lst.append("@SP")
-            lst.append("A=M-1")
-            lst.append("M=0")
-            lst.append(f"@END_TRUE{self.__label_index}")
-            lst.append("0;JMP")
-            lst.append(f"(TRUE{self.__label_index})")
-            lst.append("@SP")
-            lst.append("A=M-1")
+            lst.append("A=M")
             lst.append("M=-1")
-            lst.append(f"(END_TRUE{self.__label_index})")
+            lst.append(f"@CONTINUE_{self.__label_index}")
+            lst.append("0;JMP")
+            lst.append(f"({sign}_{self.__label_index})")
+            lst.append("@SP")
+            lst.append("A=M")
+            lst.append("M=0")
+            lst.append(f"(CONTINUE_{self.__label_index})")
 
         lst.append("@SP")
         lst.append("M=M+1")
