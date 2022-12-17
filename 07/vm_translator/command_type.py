@@ -1,0 +1,25 @@
+from enum import Enum
+
+
+ARITHMETIC = "C_ARITHMETIC"
+FUNCTION = "C_FUNCTION"
+
+
+class CommandType(Enum):
+    PUSH = "C_PUSH"
+    POP = "C_POP"
+    ADD = ARITHMETIC
+    SUB = ARITHMETIC
+    NEG = ARITHMETIC
+    EQ = ARITHMETIC
+    GT = ARITHMETIC
+    LT = ARITHMETIC
+    AND = ARITHMETIC
+    OR = ARITHMETIC
+    NOT = ARITHMETIC
+    LABEL = "C_LABEL"
+    GOTO = "C_GOTO"
+    IF_GOTO = "C_IF"
+    FUNCTION = "C_FUNCTION"
+    CALL = "C_CALL"
+    RETURN = "C_RETURN"
