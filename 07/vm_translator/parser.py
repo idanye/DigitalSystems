@@ -1,4 +1,4 @@
-from vm_translator.command_type import CommandType
+from command_type import CommandType
 
 
 COMMENT_SYMBOL = "//"
@@ -67,4 +67,10 @@ class Parser:
         pass
 
     def arg2(self):
+        """
+        Returns the second argument of the current command.
+        Should be called only if the current command is C_PUSH, C_POP,
+        C_FUNCTION or C_CALL
+        :return:
+        """
         pass
