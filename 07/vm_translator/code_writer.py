@@ -1,4 +1,6 @@
 from command_type import COMMAND_TYPE
+from segment_point import SegmentPointer
+import os
 
 
 class CodeWriter:
@@ -7,6 +9,7 @@ class CodeWriter:
         Opens input file and ready to parse it
         :param output_file: string
         """
+        self.__file_name = os.path.basename(output_file).split(".")[0]
         self.__file = open(output_file, "w")
         self.__label_index = 0
 
@@ -47,14 +50,60 @@ class CodeWriter:
         :param index: int
         """
         lst = []
-        if not (command == "pop" and segment == "constant"):
-            lst.append(f"@{index}")
-            lst.append("D=A")
-            lst.append("@SP")
-            lst.append("A=M")
-            lst.append("M=D")
-            lst.append("@SP")
-            lst.append("M=M+1")
+        if not command == "pop":
+            if segment == "constant":
+                lst.append(f"@{index}")
+                lst.append("D=A")
+                lst.append(f"@{SegmentPointer[segment]}")
+                lst.append("A=M")
+                lst.append("M=D")
+                lst.append("@SP")
+                lst.append("M=M+1")
+
+            elif segment != "static":
+                lst.append("@THIS")
+                lst.append("D=M")
+                lst.append(f"@{index}")
+                lst.append("A=D+A")
+                lst.append("D=M")
+                lst.append("@SP")
+                lst.append("A=M")
+                lst.append("M=D")
+                lst.append("@SP")
+                lst.append("M=M+1")
+
+            if segment == "static":
+                lst.append(f"@{self.__file_name}.{static_index}")
+                lst.append("D=M")
+                lst.append("@SP")
+                lst.append("A=M")
+                lst.append("M=D")
+                lst.append("@SP")
+                lst.append("M=M+1")
+
+        if command == "pop" and segment != "constant":
+            if segment != "static":
+                lst.append(f"@{SegmentPointer[segment].value}")
+                lst.append("D=M")
+                lst.append(f"@{index}")
+                lst.append("D=D+A")
+                lst.append("@R13")
+                lst.append("M=D")
+                lst.append("@SP")
+                lst.append("M=M-1")
+                lst.append("A=M")
+                lst.append("D=M")
+                lst.append("@R13")
+                lst.append("A=M")
+                lst.append("M=D")
+
+            else:
+                lst.append("@SP")
+                lst.append("M=M-1")
+                lst.append("A=M")
+                lst.append("D=M")
+                lst.append(f"@{self.__file_name}.{index}")
+                lst.append("M=D")
 
         self.write_lst_to_file(lst)
 
