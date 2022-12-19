@@ -73,7 +73,7 @@ class CodeWriter:
                 lst.append("M=M+1")
 
             if segment == "static":
-                lst.append(f"@{self.__file_name}.{static_index}")
+                lst.append(f"@{self.__file_name}.{SegmentPointer['static'].value + index}")
                 lst.append("D=M")
                 lst.append("@SP")
                 lst.append("A=M")
@@ -102,7 +102,7 @@ class CodeWriter:
                 lst.append("M=M-1")
                 lst.append("A=M")
                 lst.append("D=M")
-                lst.append(f"@{self.__file_name}.{index}")
+                lst.append(f"@{self.__file_name}.{SegmentPointer['static'].value + index}")
                 lst.append("M=D")
 
         self.write_lst_to_file(lst)
