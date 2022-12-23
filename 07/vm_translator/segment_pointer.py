@@ -8,5 +8,5 @@ class SegmentPointer(Enum):
     this = "THIS"
     that = "THAT"
     static = 16
-    pointer = 0  # TODO: Need to update
-    temp = 0
+    pointer = "R3"
+    temp = "R5"

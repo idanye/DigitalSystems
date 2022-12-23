@@ -20,6 +20,7 @@ def main(file_name):
             code_writer.write_push_pop(command, memory_type, index)
         parser.advance()
 
+    code_writer.end_of_program()
     code_writer.close()
 
 
