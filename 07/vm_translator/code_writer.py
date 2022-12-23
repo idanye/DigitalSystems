@@ -71,14 +71,28 @@ class CodeWriter:
         self.__file.close()
 
     def write_lst_to_file(self, array):
+        """
+        Adds the list to the file
+        :param array: of the file lines
+        """
         for line in array:
             self.__file.write("%s\n" % line)
 
     def end_of_program(self):
+        """
+        Adds an end program loop to the file
+        """
         lst = ["// end of file", "(end)", "@end", "0;JMP"]
         self.write_lst_to_file(lst)
 
     def __translate_arithmetic_to_asm(self, sign, arg, is_compare_operator=False):
+        """
+        Translates an arithmetic command to an assembly command
+        :param sign: the sign of the command
+        :param arg: the arguments
+        :param is_compare_operator: if it is =, <, >, =>, =<
+        :return: the translation of the command as a list
+        """
         temp = ""
         lst = ["@SP", "AM=M-1"]
 
