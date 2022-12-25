@@ -1,8 +1,4 @@
-
-
 ARITHMETIC = "C_ARITHMETIC"
-FUNCTION = "C_FUNCTION"
-
 
 COMMAND_TYPE = {
     "push": "C_PUSH",
@@ -18,7 +14,7 @@ COMMAND_TYPE = {
     "not": ARITHMETIC,
     "label": "C_LABEL",
     "goto": "C_GOTO",
-    "if_goto": "C_IF",
+    "if-goto": "C_IF",
     "function": "C_FUNCTION",
     "call": "C_CALL",
     "return": "C_RETURN"

@@ -17,7 +17,7 @@ class CodeWriter:
         Informs that the translation of a new VM file has started (called by the VMTranslator).
         :param filename: string
         """
-        pass
+        self.__file_name = os.path.basename(filename).split(".")[0]
 
     def write_arithmetic(self, command):
         """
@@ -60,12 +60,12 @@ class CodeWriter:
             if segment == "constant":
                 lst = self.__push_constant(segment, index)
             elif segment == "static":
-                lst = self.__push_static(index, self.__file_name)
+                lst = self.__push_static(index)
             else:
                 lst = self.__push_regular_commands(segment, index)
         else:
             if segment == "static":
-                lst = self.__pop_static(index, self.__file_name)
+                lst = self.__pop_static(index)
             elif segment != "constant":
                 lst = self.__pop_regular_command(segment, index)
 
@@ -85,90 +85,15 @@ class CodeWriter:
         for line in array:
             self.__file.write("%s\n" % line)
 
+    def bootstrap(self):
+        self.write_lst_to_file(["@256", "D=A", "@SP", "M=D"])
+
     def end_of_program(self):
         """
         Adds an end program loop to the file
         """
         lst = ["// end of file", "(end)", "@end", "0;JMP"]
         self.write_lst_to_file(lst)
-
-    def __translate_arithmetic_to_asm(self, sign, arg, is_compare_operator=False):
-        """
-        Translates an arithmetic command to an assembly command
-        :param sign: the sign of the command
-        :param arg: the arguments
-        :param is_compare_operator: if it is =, <, >, =>, =<
-        :return: the translation of the command as a list
-        """
-        temp = ""
-        lst = ["@SP", "AM=M-1"]
-
-        if is_compare_operator:
-            temp = sign
-            sign = "-"
-
-        if arg == 2:
-            lst.append("D=M")
-            lst.append("@SP")
-            lst.append("AM=M-1")
-            lst.append(f"M=M{sign}D")
-
-        elif arg == 1:
-            lst.append(f"M={sign}M")
-
-        if is_compare_operator:
-            sign = temp
-            lst.append(f"D=M")
-            lst.append(f"@{sign}_{self.__label_index}")
-            lst.append(f"D;{sign}")
-            lst.append("@SP")
-            lst.append("A=M")
-            lst.append("M=-1")
-            lst.append(f"@CONTINUE_{self.__label_index}")
-            lst.append("0;JMP")
-            lst.append(f"({sign}_{self.__label_index})")
-            lst.append("@SP")
-            lst.append("A=M")
-            lst.append("M=0")
-            lst.append(f"(CONTINUE_{self.__label_index})")
-
-        lst.append("@SP")
-        lst.append("M=M+1")
-        return lst
-
-    @staticmethod
-    def __push_constant(segment, index):
-        return [f"@{index}", "D=A", f"@{SegmentPointer[segment].value}", "A=M", "M=D", "@SP", "M=M+1"]
-
-    @staticmethod
-    def __push_static(index, file_name):
-        return [f"@{file_name}.{SegmentPointer['static'].value + index}", "D=M", "@SP", "A=M", "M=D", "@SP", "M=M+1"]
-
-    @staticmethod
-    def __push_regular_commands(segment, index):
-        lst = [f"@{index}", "D=A", f"@{SegmentPointer[segment].value}"]
-        if segment == "temp" or segment == "pointer":
-            lst.append("A=D+A")
-        else:
-            lst.append("A=M+D")
-        lst.extend(["D=M", "@SP", "A=M", "M=D", "@SP", "M=M+1"])
-
-        return lst
-
-    @staticmethod
-    def __pop_regular_command(segment, index):
-        lst = [f"@{index}", "D=A", f"@{SegmentPointer[segment].value}"]
-        if segment == "temp" or segment == "pointer":
-            lst.append("D=D+A")
-        else:
-            lst.append("D=M+D")
-        lst.extend(["@R13", "M=D", "@SP", "AM=M-1", "D=M", "@R13", "A=M", "M=D"])
-
-        return lst
-
-    @staticmethod
-    def __pop_static(index, file_name):
-        return ["@SP", "AM=M-1", "D=M", f"@{file_name}.{SegmentPointer['static'].value + index}", "M=D"]
 
     def write_label(self, label):
         """
@@ -211,7 +136,7 @@ class CodeWriter:
         lst.extend([f"@{return_symbol}", "D=A", "@SP", "A=M", "M=D", "@SP", "M=M+1"])
         for segment in ["local", "argument", "this", "that"]:
             lst.extend([f"@{SegmentPointer[segment].value}", "D=M", "@SP", "A=M", "M=D", "@SP", "M=M+1"])
-        lst.extend(["@SP", "D=M", "@5", "D=D-A", f"@{str(n_args)}", "D=D-A", "@ARG", "M=D"])
+        lst.extend(["@5", "D=A", f"@{str(n_args)}", "D=D+A", "@SP", "D=M-D", "@ARG", "M=D"])
         lst.extend(["@SP", "D=M", "@LCL", "M=D", f"@{function_name}", "0;JMP", f"({return_symbol})"])
         self.write_lst_to_file(lst)
         self.__label_index += 1
@@ -220,12 +145,91 @@ class CodeWriter:
         """
         Writes assembly code that effects the return command.
         """
-        lst = ["@LCL", "D=M", "@R13", "M=D",
+        counter = 2
+        lst = ["@LCL", "D=M", "@R13", "M=D", "@R13", "D=M",
                "@5", "A=D-A", "D=M", "@R14", "M=D",
-               "@SP", "AM=M-1", "D=M", "@ARG", "A=M", "M=D",
-               "@ARG", "D=M+1", "@SP", "M=D"]
-        for segment in ["local", "argument", "this", "that"]:
-            lst.extend(["@R13", "AM=M-1", "D=M", f"@{SegmentPointer[segment].value}", "M=D"])
+               "@SP", "A=M-1", "D=M", "@ARG", "A=M", "M=D",
+               "@ARG", "D=M+1", "@SP", "M=D",
+               "@R13", "A=M-1", "D=M", "@THAT", "M=D"]
+        for segment in ["this", "argument", "local"]:
+            lst.extend(["@R13", "D=M", f"@{str(counter)}", "A=D-A", "D=M", f"@{SegmentPointer[segment].value}", "M=D"])
+            counter += 1
         lst.extend(["@R14", "A=M", "0;JMP"])
 
         self.write_lst_to_file(lst)
+
+    def __translate_arithmetic_to_asm(self, sign, arg, is_compare_operator=False):
+        """
+        Translates an arithmetic command to an assembly command
+        :param sign: the sign of the command
+        :param arg: the arguments
+        :param is_compare_operator: if it is =, <, >, =>, =<
+        :return: the translation of the command as a list
+        """
+        temp = ""
+        lst = ["@SP", "AM=M-1"]
+        if is_compare_operator:
+            temp = sign
+            sign = "-"
+
+        if arg == 2:
+            lst.append("D=M")
+            lst.append("@SP")
+            lst.append("AM=M-1")
+            lst.append(f"M=M{sign}D")
+
+        elif arg == 1:
+            lst.append(f"M={sign}M")
+
+        if is_compare_operator:
+            sign = temp
+            lst.append(f"D=M")
+            lst.append(f"@{sign}_{self.__label_index}")
+            lst.append(f"D;{sign}")
+            lst.append("@SP")
+            lst.append("A=M")
+            lst.append("M=-1")
+            lst.append(f"@CONTINUE_{self.__label_index}")
+            lst.append("0;JMP")
+            lst.append(f"({sign}_{self.__label_index})")
+            lst.append("@SP")
+            lst.append("A=M")
+            lst.append("M=0")
+            lst.append(f"(CONTINUE_{self.__label_index})")
+
+        lst.append("@SP")
+        lst.append("M=M+1")
+        return lst
+
+    def __push_static(self, index):
+        return [f"@{self.__file_name}.{SegmentPointer['static'].value + index}", "D=M", "@SP", "A=M", "M=D", "@SP",
+                "M=M+1"]
+
+    def __pop_static(self, index):
+        return ["@SP", "AM=M-1", "D=M", f"@{self.__file_name}.{SegmentPointer['static'].value + index}", "M=D"]
+
+    @staticmethod
+    def __push_constant(segment, index):
+        return [f"@{index}", "D=A", f"@{SegmentPointer[segment].value}", "A=M", "M=D", "@SP", "M=M+1"]
+
+    @staticmethod
+    def __push_regular_commands(segment, index):
+        lst = [f"@{index}", "D=A", f"@{SegmentPointer[segment].value}"]
+        if segment == "temp" or segment == "pointer":
+            lst.append("A=D+A")
+        else:
+            lst.append("A=M+D")
+        lst.extend(["D=M", "@SP", "A=M", "M=D", "@SP", "M=M+1"])
+
+        return lst
+
+    @staticmethod
+    def __pop_regular_command(segment, index):
+        lst = [f"@{index}", "D=A", f"@{SegmentPointer[segment].value}"]
+        if segment == "temp" or segment == "pointer":
+            lst.append("D=D+A")
+        else:
+            lst.append("D=M+D")
+        lst.extend(["@R13", "M=D", "@SP", "AM=M-1", "D=M", "@R13", "A=M", "M=D"])
+
+        return lst

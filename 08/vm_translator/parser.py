@@ -1,4 +1,5 @@
 from command_type import COMMAND_TYPE
+import os
 
 COMMENT_SYMBOL = "//"
 WS_SYMBOL = " "
@@ -12,6 +13,7 @@ class Parser:
         """
         with open(input_file, "r") as opened_file:
             self.__file_content = opened_file.read().split("\n")
+        self.__file_name = input_file
         self.__current_line_number = -1
         self.advance()
 
@@ -33,7 +35,7 @@ class Parser:
             current_line = self.get_current_line()
             if not current_line.startswith(COMMENT_SYMBOL) and not current_line == "":
                 self.__current_line_number += 1
-
+            current_line = self.get_current_line()
             while self.has_more_lines() and (current_line.startswith(COMMENT_SYMBOL) or current_line == ""):
                 self.__current_line_number += 1
                 current_line = self.get_current_line()
@@ -43,10 +45,11 @@ class Parser:
         Returns the current instruction, skips over whitespaces and comments, if necessary
         :return: the current instruction
         """
-        instruction = self.__file_content[self.__current_line_number].lstrip()
+        instruction = self.__file_content[self.__current_line_number]
+
         if COMMENT_SYMBOL in instruction:
-            return instruction.split(COMMENT_SYMBOL)[0]
-        return instruction
+            return instruction.split(COMMENT_SYMBOL)[0].strip()
+        return instruction.strip()
 
     def command_type(self):
         """
@@ -65,7 +68,7 @@ class Parser:
         :return:
         """
         if self.command_type() == "C_ARITHMETIC":
-            return self.get_current_line()
+            return self.get_current_line().lstrip()
         elif self.command_type() != "C_RETURN":
             return self.get_current_line().split(WS_SYMBOL)[1]
 
@@ -78,3 +81,6 @@ class Parser:
         """
         if self.command_type() == "C_PUSH" or self.command_type() == "C_POP" or self.command_type() == "C_FUNCTION" or self.command_type() == "C_CALL":
             return int(self.get_current_line().split(WS_SYMBOL)[2])
+
+    def get_compressed_file_name(self):
+        return self.__file_name
