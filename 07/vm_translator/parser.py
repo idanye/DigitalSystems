@@ -45,8 +45,8 @@ class Parser:
         """
         instruction = self.__file_content[self.__current_line_number].lstrip()
         if COMMENT_SYMBOL in instruction:
-            return instruction.split(COMMENT_SYMBOL)[0]
-        return instruction
+            return instruction.split(COMMENT_SYMBOL)[0].strip()
+        return instruction.strip()
 
     def command_type(self):
         """
