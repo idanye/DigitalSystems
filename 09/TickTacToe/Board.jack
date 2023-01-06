@@ -1,47 +1,198 @@
 class Board {
-    field Array board;
-    field int boardSize;
-    field boolean isWin;
-    field boolean isDraw;
+     field Random random;
+     field Array board;
+     field int boardSize;
+     field boolean isComputerTurn;
+     field boolean isWin;
+     field boolean isDraw;
 
      /** Constructs a new board with a given location and size 9. */
-    constructor Board new() {
-        let boardSize = 9;
-        do drawBoard();
-        return this;
-    }
+     constructor Board new() {
+          let boardSize = 10;
+          let board = Array.new(boardSize);
+          do erase();
+          do drawBoard();
+          return this;
+     }
 
-    /** Disposes this board. */
-   method void dispose() {
-        do Screen.setColor(false);
-        do Screen.drawRectangle(200, 60, 320, 180);
-        do Screen.setColor(true);
-        do Memory.deAlloc(board);
-        return;
-   }
+     /** Disposes this board. */
+     method void dispose() {
+          do Screen.setColor(false);
+          do Screen.drawRectangle(200, 60, 320, 180);
+          do Screen.setColor(true);
+          do Memory.deAlloc(board);
+          return;
+     }
 
-    /** Draws the board on the screen. */
-   method void drawBoard() {
-        do Screen.drawRectangle(238, 60, 242, 180);
-        do Screen.drawRectangle(278, 60, 282, 180);
-        do Screen.drawRectangle(200, 98, 320, 102);
-        do Screen.drawRectangle(200, 138, 320, 142);
-        return;
-   }
+     /** Draws the board on the screen. */
+     method void drawBoard() {
+          do Screen.drawRectangle(238, 60, 242, 180);
+          do Screen.drawRectangle(278, 60, 282, 180);
+          do Screen.drawRectangle(200, 98, 320, 102);
+          do Screen.drawRectangle(200, 138, 320, 142);
+          return;
+     }
 
-    /** Erases the board from the screen. */
-   method void erase() {
-        var int index;
-        let isWin = false;
-        let isDraw = false;
-        let index = 0;
-        do Screen.setColor(false);
-        while (index < boardSize){
-            let board[index] = 0;
-            let index = index + 1;
-        }
-        return;
-   }
+     /** Erases the board from the screen. */
+     method void erase() {
+          var int index;
+          let index = 1;
+          let board[0] = 0;
+          while (index < boardSize){
+               let board[index] = -1;
+               let index = index + 1;
+          }
+          return;
+     }
 
+     method void drawX(int index) {
+          var int x1, x2, y1, y2;
+          let board[index] = 1;
+          if (( index > 0 ) & (index < 4)) {
+               let x1 = 200+ ((index - 1) * 40);
+               let x2 = 200+ (index * 40);
+               let y1 = 60;
+               let y2 = 100;
+               do Screen.drawLine(x1, y1 , x2 , y2);
+               do Screen.drawLine(x2, y1 , x1, y2);
+          }
+          if (( index > 3 ) & (index < 7)) {
+               let index = index - 3;
+               let x1 = 200+ ((index - 1) * 40);
+               let x2 = 200+ (index * 40);
+               let y1 = 100;
+               let y2 = 140;
+               do Screen.drawLine(x1, y1 , x2 , y2);
+               do Screen.drawLine(x2, y1 , x1, y2);
+          }
+          if (( index > 6 ) & (index < 10)) {
+               let index = index - 6;
+               let x1 = 200+ ((index - 1) * 40);
+               let x2 = 200+ (index * 40);
+               let y1 = 140;
+               let y2 = 180;
+               do Screen.drawLine(x1, y1 , x2 , y2);
+               do Screen.drawLine(x2, y1 , x1, y2);
+          }
+          let isComputerTurn = true;
+          return;
+     }
 
+     method void drawO(int index) {
+          var int x1, x2, y1, y2;
+          var int x, y, r;
+          let r = 15;
+          let board[index] = 0;
+          if (( index > 0 ) & (index < 4)) {
+               let x1 = 200+ ((index - 1) * 40);
+               let x2 = 200+ (index * 40);
+               let y1 = 60;
+               let y2 = 100;
+               let x = (x1 + x2)/2;
+               let y = (y1 + y2)/2; 
+               do Screen.drawCircle(x, y, r+1);
+               do Screen.setColor(false);
+               do Screen.drawCircle(x, y , r);
+               do Screen.setColor(true);
+          }
+          if (( index > 3 ) & (index < 7)) {
+               let index = index - 3;
+               let x1 = 200+ ((index - 1) * 40);
+               let x2 = 200+ (index * 40);
+               let y1 = 100;
+               let y2 = 140;
+               let x = (x1 + x2)/2;
+               let y = (y1 + y2)/2; 
+               do Screen.drawCircle(x, y, r+1);
+               do Screen.setColor(false);
+               do Screen.drawCircle(x, y , r);
+               do Screen.setColor(true);
+          }
+          if (( index > 7 ) & (index < 10)) {
+               let index = index - 6;
+               let x1 = 200+ ((index - 1) * 40);
+               let x2 = 200+ (index * 40);
+               let y1 = 140;
+               let y2 = 180;
+               let x = (x1 + x2)/2;
+               let y = (y1 + y2)/2; 
+               do Screen.drawCircle(x, y, r+1);
+               do Screen.setColor(false);
+               do Screen.drawCircle(x, y , r);
+               do Screen.setColor(true);
+          }
+          let isComputerTurn = false;
+          return;
+
+     }
+     
+     method boolean isComputerTurn(){
+          return isComputerTurn;
+     }
+
+     method boolean isCellFree(int index){ 
+          if( board[index] = -1 ){
+               return true;
+          }
+          return false;
+     }
+
+     method int getRandomIndex() {
+          var int nextPlace;
+          let random = Random.new(500);
+          let nextPlace = random.randRange(boardSize);
+          while (~ (isCellFree(nextPlace))) {
+               let nextPlace = random.randRange(boardSize);
+          }
+          return nextPlace;
+     }
+
+     method boolean isWin(int indicator) {
+          if ((board[1] = indicator) & (board[5] = indicator) & (board[9] = indicator)) {
+               return true;
+          }
+          if ((board[3] = indicator) & (board[5] = indicator) & (board[7] = indicator)) {
+               return true;
+          }
+          if ((board[1] = indicator) & (board[2] = indicator) & (board[3] = indicator)) {
+               return true;
+          }
+          if ((board[4] = indicator) & (board[5] = indicator) & (board[6] = indicator)) {
+               return true;
+          }
+          if ((board[7] = indicator) & (board[8] = indicator) & (board[9] = indicator)) {
+               return true;
+          }
+          if ((board[1] = indicator) & (board[4] = indicator) & (board[7] = indicator)) {
+               return true;
+          }
+          if ((board[2] = indicator) & (board[5] = indicator) & (board[8] = indicator)) {
+               return true;
+          }
+          if ((board[3] = indicator) & (board[6] = indicator) & (board[9] = indicator)) {
+               return true;
+          }
+          return false;
+     }
+
+     method boolean isDraw() {
+          if (getNumOfFreeCells() = 0){
+               return true;
+          }
+
+          return false;
+     }
+
+     method int getNumOfFreeCells(){
+          var int index, counter;
+          let index = 1;
+          let counter = 0;
+          while (index < boardSize){
+               if ( board [index] = -1 ){
+                    let counter = counter + 1;
+               }
+               let index = index + 1;
+          }
+          return counter;
+     }
 }

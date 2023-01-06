@@ -1,29 +1,88 @@
 class Game {
     static Board board;
     function void init() {
-        return;
-    }
-    function void start() {
+        do Screen.clearScreen();
+        do Output.moveCursor(0,0);
         do Output.printString("Lets start playing!");
+        do Output.moveCursor(1,0);
         let board = Board.new();
         return;
     }
+    function void start() {
+        var string turn;
+        var int chosenNum, indicator;
+        var boolean isWin, isDraw;
+        
+        let isWin = false;
+        let isDraw = false;
 
-    function void gameInput() {
-        var int currentNum;
-        let currentNum = -1;
-        while (~isValid(currentNum)){
-            let currentNum = Keyboard.readInt("Enter a number between 1-9 OR 0 for restart:");
-            if (currentNum == 0){
-                do Board.erase();
+        while (~(isWin | isDraw)){
+            if( board.isComputerTurn() ) {
+                do Output.moveCursor(2,0);
+                do Output.printString(" O's turn!");
+                let turn = "Computer";
+                let indicator = 0;
+                let chosenNum = board.getRandomIndex();
+                do board.drawO(chosenNum);
+            }
+            else {
+                do Output.moveCursor(2,0);
+                do Output.printString(" X's turn!");
+                let turn = "X";
+                let indicator = 1; 
+                let chosenNum = Game.gameInput();
+                if (chosenNum = 0){
+                    do game.init();
+                }
+                else {
+                    do board.drawX(chosenNum);
+                }
+            }
+            let isWin = board.isWin(indicator);
+            if (isWin){
+                do Output.moveCursor(2,0);
+                do Output.printString(turn);
+                do Output.printString(" won!!!!!!!!!!");
+                do Game.showCredits();
+
+                return;
+            }
+            let isDraw = board.isDraw(); 
+            if (isDraw){
+                do Output.moveCursor(2,0);
+                do Output.printString("We have a tie! ");
+                do Game.showCredits();
+                return;
             }
         }
+        return;
+    }
+
+    function int gameInput() {
+        var int currentNum;
+        do Output.moveCursor(1,0);
+        let currentNum = Keyboard.readInt("Enter a number between 1-9 OR 0 for restart:");
+        while(~Game.isValid(currentNum)){
+            do Game.init();
+            do Output.moveCursor(2,0);
+            do Output.printString("Restarted!");
+            do Output.moveCursor(1,0);
+            let currentNum = Keyboard.readInt("Enter a number between 1-9 OR 0 for restart:");
+        }
+        return currentNum;
     }
 
     function boolean isValid (int currentNum) {
-        if (currentNum <= 9 & currentNum >= 0){
+        if ((currentNum < 10) & (currentNum > -1) & (board.isCellFree(currentNum) = true)){
             return true;
         }
         return false;
     }
+
+
+    function void showCredits() {
+		do Output.moveCursor(21,22);
+		do Output.printString("By Idan Yehiel and Orit Yair");
+		return;
+	}
 }
