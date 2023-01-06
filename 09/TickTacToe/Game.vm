@@ -1,6 +1,4 @@
 function Game.init 0
-call InputUtil.init 0
-pop temp 0
 push constant 0
 return
 function Game.start 0
@@ -44,16 +42,9 @@ push constant 103
 call String.appendChar 2
 push constant 33
 call String.appendChar 2
-call InputUtil.showMessage 1
+call Output.printString 1
 pop temp 0
-label WHILE_EXP0
-push constant 0
-not
-not
-if-goto WHILE_END0
 call Board.new 0
 pop static 0
-goto WHILE_EXP0
-label WHILE_END0
 push constant 0
 return

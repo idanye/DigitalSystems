@@ -21,6 +21,10 @@ push constant 320
 push constant 180
 call Screen.drawRectangle 4
 pop temp 0
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
 push this 0
 call Memory.deAlloc 1
 pop temp 0
@@ -29,10 +33,6 @@ return
 function Board.drawBoard 0
 push argument 0
 pop pointer 0
-push constant 0
-not
-call Screen.setColor 1
-pop temp 0
 push constant 238
 push constant 60
 push constant 242
@@ -48,7 +48,7 @@ pop temp 0
 push constant 200
 push constant 98
 push constant 320
-push constant 182
+push constant 102
 call Screen.drawRectangle 4
 pop temp 0
 push constant 200
@@ -63,14 +63,14 @@ function Board.erase 1
 push argument 0
 pop pointer 0
 push constant 0
-call Screen.setColor 1
-pop temp 0
-push constant 0
 pop this 2
 push constant 0
 pop this 3
 push constant 0
 pop local 0
+push constant 0
+call Screen.setColor 1
+pop temp 0
 label WHILE_EXP0
 push local 0
 push this 1

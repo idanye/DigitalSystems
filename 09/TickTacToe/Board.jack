@@ -15,16 +15,16 @@ class Board {
    method void dispose() {
         do Screen.setColor(false);
         do Screen.drawRectangle(200, 60, 320, 180);
+        do Screen.setColor(true);
         do Memory.deAlloc(board);
         return;
    }
 
     /** Draws the board on the screen. */
    method void drawBoard() {
-        do Screen.setColor(true);
         do Screen.drawRectangle(238, 60, 242, 180);
         do Screen.drawRectangle(278, 60, 282, 180);
-        do Screen.drawRectangle(200, 98, 320, 182);
+        do Screen.drawRectangle(200, 98, 320, 102);
         do Screen.drawRectangle(200, 138, 320, 142);
         return;
    }
