@@ -1,0 +1,47 @@
+class Board {
+    field Array board;
+    field int boardSize;
+    field boolean isWin;
+    field boolean isDraw;
+
+     /** Constructs a new board with a given location and size 9. */
+    constructor Board new() {
+        let boardSize = 9;
+        do drawBoard();
+        return this;
+    }
+
+    /** Disposes this board. */
+   method void dispose() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(200, 60, 320, 180);
+        do Memory.deAlloc(board);
+        return;
+   }
+
+    /** Draws the board on the screen. */
+   method void drawBoard() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(238, 60, 242, 180);
+        do Screen.drawRectangle(278, 60, 282, 180);
+        do Screen.drawRectangle(200, 98, 320, 182);
+        do Screen.drawRectangle(200, 138, 320, 142);
+        return;
+   }
+
+    /** Erases the board from the screen. */
+   method void erase() {
+        var int index;
+        let isWin = false;
+        let isDraw = false;
+        let index = 0;
+        do Screen.setColor(false);
+        while (index < boardSize){
+            let board[index] = 0;
+            let index = index + 1;
+        }
+        return;
+   }
+
+
+}

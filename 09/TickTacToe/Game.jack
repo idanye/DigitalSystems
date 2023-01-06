@@ -1,0 +1,14 @@
+class Game {
+    static Board board;
+    function void init() {
+        do InputUtil.init();
+        return;
+    }
+    function void start() {
+        do InputUtil.showMessage("Lets start playing!");
+        while (true) {
+            let board = Board.new();
+        }
+        return;
+    }
+}
