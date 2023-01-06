@@ -8,4 +8,22 @@ class Game {
         let board = Board.new();
         return;
     }
+
+    function void gameInput() {
+        var int currentNum;
+        let currentNum = -1;
+        while (~isValid(currentNum)){
+            let currentNum = Keyboard.readInt("Enter a number between 1-9 OR 0 for restart:");
+            if (currentNum == 0){
+                do Board.erase();
+            }
+        }
+    }
+
+    function boolean isValid (int currentNum) {
+        if (currentNum <= 9 & currentNum >= 0){
+            return true;
+        }
+        return false;
+    }
 }
